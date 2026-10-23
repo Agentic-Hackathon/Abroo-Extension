@@ -25,11 +25,14 @@
       "cwd": "${workspaceFolder}/Abroo-main",
       "env": {
         "LIARA_API_TOKEN": "${secret:liaraToken}",
-        "LIARA_MCP_CONSOLIDATED": "true"
+        "LIARA_MCP_CONSOLIDATED": "false"
       },
-      "includeTools": ["*"]
+      "includeTools": ["*"],
+      "enabled": true,
+      "toolPolicies": {"liara_list_apps":"automatic", "liara_diagnose_app":"ask", "liara_create_app":"ask"}
     }
   ],
   "ui": {"direction": "auto", "language": "fa"},
+  "history": {"enabled": true},
   "agent": {"maxToolRounds": 8, "requestTimeoutMs": 120000, "maxOutputChars": 16000}
 }

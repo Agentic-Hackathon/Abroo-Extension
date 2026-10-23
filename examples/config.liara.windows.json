@@ -1,0 +1,38 @@
+{
+  "models": [
+    {
+      "name": "My API Model",
+      "provider": "openai-compatible",
+      "model": "REPLACE_WITH_MODEL_ID",
+      "apiBase": "https://REPLACE_WITH_YOUR_LLM_HOST/v1",
+      "apiKey": "${secret:llmApiKey}",
+      "stream": true
+    }
+  ],
+  "mcpServers": [
+    {
+      "name": "Liara",
+      "transport": "stdio",
+      "command": "node",
+      "args": ["C:/Users/home/Documents/Hackathon/liara-mcp/dist/index.js"],
+      "cwd": "C:/Users/home/Documents/Hackathon/liara-mcp",
+      "env": {
+        "LIARA_API_TOKEN": "${secret:liaraToken}",
+        "LIARA_TEAM_ID": "REPLACE_WITH_YOUR_TEAM_ID",
+        "DOTENV_CONFIG_QUIET": "true",
+        "LIARA_MCP_CONSOLIDATED": "false"
+      },
+      "enabled": true,
+      "includeTools": ["*"],
+      "toolPolicies": {
+        "liara_list_apps": "automatic",
+        "liara_get_app": "ask",
+        "liara_restart_app": "ask",
+        "liara_create_app": "ask"
+      }
+    }
+  ],
+  "ui": {"direction":"auto", "language":"fa"},
+  "history": {"enabled":true},
+  "agent": {"maxToolRounds": 8, "requestTimeoutMs": 120000, "maxOutputChars": 16000}
+}

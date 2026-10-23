@@ -9,3 +9,40 @@
 .composer{border-top:1px solid var(--line);padding:9px 11px 12px;background:var(--vscode-sideBar-background,var(--vscode-editor-background))}.composer textarea{display:block;width:100%;max-height:160px;resize:vertical;border:1px solid var(--line);border-radius:12px;background:var(--vscode-input-background);color:var(--vscode-input-foreground);padding:11px;line-height:1.6;unicode-bidi:plaintext;outline:none}.composer-actions{display:flex;align-items:center;justify-content:space-between;gap:7px;padding-top:8px}.composer-actions span{max-width:70%;line-height:1.3}.composer-actions button{padding:7px 11px}.composer-actions #send{background:var(--accent);color:var(--vscode-button-foreground)}.composer-actions #stop{background:var(--vscode-inputValidation-errorBackground,#7d3131);color:white}
 .chart{border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:11px;display:flex;flex-direction:column;gap:7px}.chart .chart-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.chart-title{font-weight:600;line-height:1.4}.chart select{font-size:11px;color:inherit;background:var(--vscode-input-background);border:1px solid var(--line);border-radius:7px;padding:4px}.chart-viewport{min-height:170px;position:relative;overflow:hidden}.chart svg{display:block;width:100%;height:190px}.chart svg text{fill:var(--muted);font-size:10px}.chart .legend{display:flex;flex-wrap:wrap;gap:10px}.chart .legend label{display:flex;align-items:center;gap:4px;font-size:11px}.chart .legend input{accent-color:var(--accent)}.chart .tip{font-size:11px;line-height:1.5;color:var(--vscode-foreground);min-height:18px;direction:auto;unicode-bidi:plaintext}
 body[data-dir=rtl] .bubble,body[data-dir=rtl] .activity{text-align:right;direction:rtl}body[data-dir=ltr] .bubble,body[data-dir=ltr] .activity{text-align:left;direction:ltr}body[data-dir=auto] .bubble,body[data-dir=auto] .activity{unicode-bidi:plaintext;text-align:start;direction:auto}
+
+/* v0.2.0 layout fixes: scroll area must shrink within the column. */
+html,body{height:100%;min-height:0}
+#app{height:100%;min-height:0;overflow:hidden}
+.view-panel{min-height:0;flex:1;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.view-panel[hidden],#scrollBottom[hidden]{display:none!important}
+#messages{min-height:0;height:0;flex:1 1 auto;overscroll-behavior:contain;overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable;}
+#scrollBottom{position:absolute;bottom:103px;left:50%;transform:translateX(-50%);z-index:4;border:1px solid var(--line);padding:7px 12px;background:var(--vscode-editorWidget-background);box-shadow:0 2px 12px #0004}
+.composer{flex-shrink:0}
+.bubble p,.bubble li,.activity p,.note{unicode-bidi:plaintext;overflow-wrap:anywhere}
+.bubble p[dir=rtl],.bubble li[dir=rtl]{text-align:right}
+.bubble p[dir=ltr],.bubble li[dir=ltr]{text-align:left}
+.bubble code:not(pre code),.tool-summary code{direction:ltr;unicode-bidi:isolate;display:inline-block;text-align:left}
+.activity{min-width:0;direction:rtl;text-align:right}
+.activity pre{direction:ltr;text-align:left;unicode-bidi:plaintext}
+.field select,.field input:not([type=checkbox]),.field textarea{unicode-bidi:plaintext;text-align:start}
+.field label{direction:auto;unicode-bidi:plaintext}
+body[data-dir=ltr] .activity{direction:ltr;text-align:left}
+body[data-dir=rtl] .activity{direction:rtl;text-align:right}
+.tools-page{overflow-y:auto;overscroll-behavior:contain;padding:14px 12px;gap:14px}
+.tools-heading h2{margin:9px 0 3px;font-size:19px}
+.tools-heading p{margin:4px 0 10px}
+.tools-actions{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 12px}
+.tools-actions button,.tools-heading #backToChat{padding:8px 11px}
+#searchTools{width:100%;border-radius:8px;background:var(--vscode-input-background);color:var(--vscode-input-foreground);padding:9px;border:1px solid var(--line)}
+#toolsList{display:flex;flex-direction:column;gap:13px;min-width:0}
+.server-card{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
+.server-head{display:flex;align-items:center;gap:8px;direction:ltr}
+.server-head strong{flex:1;font-size:14px}
+.server-head input{accent-color:var(--accent);width:17px;height:17px}
+.server-state{font-size:11px}
+.tool-row{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;border-top:1px solid var(--line);padding:11px 0;min-width:0}
+.tool-summary{flex:1;min-width:0;direction:ltr;text-align:left}
+.tool-summary code{word-break:break-word;white-space:normal;font:12px var(--vscode-editor-font-family,monospace)}
+.tool-summary p{margin:4px 0 0;line-height:1.45;overflow-wrap:anywhere}
+.tool-row .policy{width:112px;flex-shrink:0;padding:6px 3px;font-size:11px;border-radius:7px;border:1px solid var(--line);background:var(--vscode-input-background);color:var(--vscode-input-foreground)}
+@media (max-width:370px){.tool-row{flex-direction:column}.tool-row .policy{width:100%}}

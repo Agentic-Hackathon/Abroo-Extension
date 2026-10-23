@@ -1,8 +1,8 @@
 {
   "name": "abroo-assistant",
   "displayName": "Abroo Assistant",
-  "description": "Lightweight bilingual AI chat with MCP tools, interactive forms and charts",
-  "version": "0.1.0",
+  "description": "Abroo AI assistant with persistent chat, MCP tools settings, RTL, forms and charts",
+  "version": "0.2.0",
   "publisher": "abroo",
   "private": true,
   "license": "MIT",
