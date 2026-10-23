@@ -82,11 +82,12 @@ class AbrooViewProvider {
       const fields=p.fields||[],values={};let valid=true;
       for(const f of fields){
         let value=m.values?.[f.id];
-        if(f.type==='checkbox')value=value===true;
+        if(f.type==='checkbox'&&(f.options||[]).length){const allowed=new Set(f.options.map(o=>o.value));value=Array.isArray(value)?value.filter(v=>typeof v==='string'&&allowed.has(v)):[];}
+        else if(f.type==='checkbox')value=value===true;
         else if(f.type==='number')value=(value===''||value===null||value===undefined)?NaN:Number(value);
         else value=typeof value==='string'?value:'';
-        if(f.required&&(value===''||value===undefined||(f.type==='number'&&!Number.isFinite(value))||(f.type==='checkbox'&&!value)))valid=false;
-        if(['select','radio'].includes(f.type)&&!(f.options||[]).some(o=>o.value===value))valid=false;
+        if(f.required&&(value===''||value===undefined||(f.type==='number'&&!Number.isFinite(value))||(f.type==='checkbox'&&(Array.isArray(value)?!value.length:!value))))valid=false;
+        if(['select','radio'].includes(f.type)&&!(value===''&&!f.required)&&!(f.options||[]).some(o=>o.value===value))valid=false;
         values[f.id]=value;
       }
       const result=valid?{cancelled:false,values}:{cancelled:true,error:'Invalid form values'};
