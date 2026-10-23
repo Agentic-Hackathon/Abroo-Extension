@@ -1,0 +1,93 @@
+{
+  "name": "abroo-assistant",
+  "displayName": "Abroo Assistant",
+  "description": "Lightweight bilingual AI chat with MCP tools, interactive forms and charts",
+  "version": "0.1.0",
+  "publisher": "abroo",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.93.0"
+  },
+  "main": "./extension.js",
+  "activationEvents": [
+    "onView:abroo.chat",
+    "onCommand:abroo.openChat",
+    "onCommand:abroo.openConfig"
+  ],
+  "categories": [
+    "AI",
+    "Chat",
+    "Other"
+  ],
+  "keywords": [
+    "mcp",
+    "liara",
+    "persian",
+    "chat",
+    "devops",
+    "rtl"
+  ],
+  "icon": "media/icon.png",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "abroo",
+          "title": "Abroo",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "abroo": [
+        {
+          "id": "abroo.chat",
+          "name": "Assistant",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "abroo.openChat",
+        "title": "Abroo: Open Assistant"
+      },
+      {
+        "command": "abroo.openConfig",
+        "title": "Abroo: Open Configuration"
+      },
+      {
+        "command": "abroo.reloadConfig",
+        "title": "Abroo: Reload Configuration / Reconnect MCP"
+      },
+      {
+        "command": "abroo.setSecret",
+        "title": "Abroo: Store API Key / Secret"
+      },
+      {
+        "command": "abroo.clearChat",
+        "title": "Abroo: New Conversation"
+      }
+    ],
+    "configuration": {
+      "title": "Abroo Assistant",
+      "properties": {
+        "abroo.configPath": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path or workspace-relative path to config.json. Blank: .abroo/config.json under the workspace, otherwise ~/.abroo/config.json."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.cjs",
+    "package": "npm run build && node scripts/package.mjs"
+  },
+  "extensionKind": [
+    "workspace",
+    "ui"
+  ]
+}

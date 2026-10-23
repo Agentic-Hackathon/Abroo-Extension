@@ -1,0 +1,35 @@
+{
+  "models": [
+    {
+      "name": "My OpenAI-compatible LLM",
+      "provider": "openai-compatible",
+      "model": "your-model-id",
+      "apiBase": "https://your-llm.example.com/v1",
+      "apiKey": "${secret:llmApiKey}",
+      "temperature": 0.2
+    },
+    {
+      "name": "Ollama local (optional)",
+      "provider": "openai-compatible",
+      "model": "qwen2.5:7b",
+      "apiBase": "http://127.0.0.1:11434/v1",
+      "apiKey": ""
+    }
+  ],
+  "mcpServers": [
+    {
+      "name": "liara",
+      "transport": "stdio",
+      "command": "node",
+      "args": ["${workspaceFolder}/Abroo-main/dist/index.js"],
+      "cwd": "${workspaceFolder}/Abroo-main",
+      "env": {
+        "LIARA_API_TOKEN": "${secret:liaraToken}",
+        "LIARA_MCP_CONSOLIDATED": "true"
+      },
+      "includeTools": ["*"]
+    }
+  ],
+  "ui": {"direction": "auto", "language": "fa"},
+  "agent": {"maxToolRounds": 8, "requestTimeoutMs": 120000, "maxOutputChars": 16000}
+}
