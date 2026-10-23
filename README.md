@@ -1,4 +1,4 @@
-# Abroo Assistant v0.2.0 — Lightweight VS Code Extension
+# Abroo Assistant — Lightweight VS Code Extension
 
 Standalone VS Code sidebar assistant with OpenAI-compatible LLMs and stdio MCP servers. **MCP processes start automatically** from the unified `.abroo/config.json` configuration; running the server manually is not necessary. The UI is inspired by Continue but does not bundle or fork its code.
 
@@ -17,7 +17,7 @@ Standalone VS Code sidebar assistant with OpenAI-compatible LLMs and stdio MCP s
 ### Installation
 
 ```powershell
-code --install-extension .\abroo-assistant-0.2.0.vsix --force
+code --install-extension .\abroo-assistant-0.2.1.vsix --force
 ```
 
 Reload VS Code. Run `Abroo: Open Configuration` from command palette and use `examples/config.liara.windows.json` for the user's Windows Liara MCP path. Read **[INSTALL_FA.md](INSTALL_FA.md)** for complete Persian instructions, the configuration example and troubleshooting steps.
