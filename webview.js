@@ -43,36 +43,48 @@ const activeRequests=new Set();
 function approval(m){if(activeRequests.has(m.id))return;activeRequests.add(m.id);const w=activity('🔐 تأیید اجرای ابزار / Tool approval');
   const t=elem('p','',`${m.server}  →  ${m.tool}`);t.dir='ltr';w.appendChild(t);
   const explanation=elem('p','details','این درخواست توسط مدل پیشنهاد شده است و تا پیش از تأیید شما اجرا نمی‌شود. آرگومان‌ها را بررسی کنید.');w.appendChild(explanation);
+  const confirmKey=Object.keys(m.args||{}).find(k=>/confirm/i.test(k)&&typeof m.args[k]==='string'&&m.args[k]);
   const pre=elem('pre','',JSON.stringify(m.args??{},null,2));w.appendChild(pre);
-  const bar=elem('div','buttons');const no=elem('button','secondary','رد کردن / Deny');const yes=elem('button','primary','تأیید و اجرا / Approve');bar.append(no,yes);w.appendChild(bar);
+  const bar=elem('div','buttons');const no=elem('button','secondary','رد کردن / Deny');const yes=elem('button','primary',confirmKey?'تأیید و اعمال تغییر / Confirm & apply':'تأیید و اجرا / Approve');bar.append(no,yes);w.appendChild(bar);
   function finish(approved){no.disabled=yes.disabled=true;const v=elem('p',approved?'good':'bad',approved?'اجازهٔ اجرا داده شد؛ منتظر نتیجه…':'درخواست رد شد');w.appendChild(v);send('approval',{id:m.id,approved});}
   no.onclick=()=>finish(false);yes.onclick=()=>finish(true);w.dataset.requestId=m.id;followBottom=true;scroll();requestAnimationFrame(()=>w.scrollIntoView({block:'end'}));
 }
+const OTHER='__other__',OTHER_LABEL='سایر / Other';
+function otherRow(type,name){const row=elem('label','field-row');const input=document.createElement('input');input.type=type;if(name)input.name=name;input.value=OTHER;row.append(input,elem('span','choice-text',OTHER_LABEL));return row;}
 function form(m){if(activeRequests.has(m.id))return;activeRequests.add(m.id);const w=activity('▤ '+(m.title||'Interactive form'));
   if(m.description)w.appendChild(elem('p','details',m.description));
   const controls=new Map();
   for(const f of m.fields||[]){const container=elem('div','field'),label=elem('label','',f.label+(f.required?' *':''));container.appendChild(label);let control;
-    if(f.type==='select'){control=elem('select');control.appendChild(new Option('— انتخاب کنید / Select —',''));for(const o of f.options||[])control.appendChild(new Option(o.label,o.value));}
-    else if(f.type==='radio'){control=elem('div');for(const o of f.options||[]){const row=elem('label','field-row');const input=document.createElement('input');input.type='radio';input.name=m.id+'_'+f.id;input.value=o.value;const span=elem('span','choice-text',o.label);setDir(span);row.append(input,span);control.appendChild(row);}control.className='choice-group';}
-    else if(f.type==='checkbox'&&(f.options||[]).length){control=elem('div','choice-group');for(const o of f.options){const row=elem('label','field-row');const input=document.createElement('input');input.type='checkbox';input.value=o.value;const span=elem('span','choice-text',o.label);setDir(span);row.append(input,span);control.appendChild(row);}}
+    if(f.type==='select'){control=elem('select');control.appendChild(new Option('— انتخاب کنید / Select —',''));for(const o of f.options||[])control.appendChild(new Option(o.label,o.value));if(f.allowOther)control.appendChild(new Option(OTHER_LABEL,OTHER));}
+    else if(f.type==='radio'){control=elem('div');for(const o of f.options||[]){const row=elem('label','field-row');const input=document.createElement('input');input.type='radio';input.name=m.id+'_'+f.id;input.value=o.value;const span=elem('span','choice-text',o.label);setDir(span);row.append(input,span);control.appendChild(row);}if(f.allowOther)control.appendChild(otherRow('radio',m.id+'_'+f.id));control.className='choice-group';}
+    else if(f.type==='checkbox'&&(f.options||[]).length){control=elem('div','choice-group');for(const o of f.options){const row=elem('label','field-row');const input=document.createElement('input');input.type='checkbox';input.value=o.value;const span=elem('span','choice-text',o.label);setDir(span);row.append(input,span);control.appendChild(row);}if(f.allowOther)control.appendChild(otherRow('checkbox'));}
     else if(f.type==='checkbox'){control=elem('div','choice-group');const row=elem('label','field-row');const input=document.createElement('input');input.type='checkbox';row.append(input,elem('span','choice-text',f.placeholder||f.label));control.appendChild(row);control.single=input;}
     else if(f.type==='textarea'){control=elem('textarea');control.rows=3;control.placeholder=f.placeholder||'';}
     else{control=elem('input');control.type=f.type==='number'?'number':'text';control.placeholder=f.placeholder||'';}
     if(f.type==='select'||f.type==='text'||f.type==='number'||f.type==='textarea')control.dir=f.type==='number'?'ltr':'auto';
-    container.appendChild(control);w.appendChild(container);controls.set(f.id,{control,field:f});
+    container.appendChild(control);
+    let other=null;
+    if(f.allowOther&&(f.type==='select'||f.type==='radio'||(f.type==='checkbox'&&(f.options||[]).length))){
+      other=elem('input','other-input');other.type='text';other.hidden=true;other.maxLength=500;other.dir='auto';other.placeholder='گزینهٔ دیگر را بنویسید… / Type your own';container.appendChild(other);
+      control.addEventListener('change',()=>{const on=f.type==='select'?control.value===OTHER:!!control.querySelector('input[value="'+OTHER+'"]:checked');other.hidden=!on;if(on)other.focus();});
+    }
+    w.appendChild(container);controls.set(f.id,{control,field:f,other});
   }
   const feedback=elem('div','bad small');w.appendChild(feedback);
   const bar=elem('div','buttons'),cancel=elem('button','secondary','انصراف / Cancel'),submit=elem('button','primary','ثبت انتخاب / Submit');bar.append(cancel,submit);w.appendChild(bar);
-  function disable(){submit.disabled=cancel.disabled=true;for(const {control} of controls.values()){control.disabled=true;control.querySelectorAll?.('input').forEach(e=>e.disabled=true);}}
+  function disable(){submit.disabled=cancel.disabled=true;for(const {control,other} of controls.values()){control.disabled=true;control.querySelectorAll?.('input').forEach(e=>e.disabled=true);if(other)other.disabled=true;}}
   cancel.onclick=()=>{disable();send('form',{id:m.id,cancelled:true});w.appendChild(elem('p','details','Cancelled'));};
   submit.onclick=()=>{
-    const values={};feedback.textContent='';
-    for(const [id,{control,field:f}] of controls){
+    const values={},custom={};feedback.textContent='';
+    for(const [id,{control,field:f,other}] of controls){
       let v=f.type==='checkbox'?(control.single?control.single.checked:[...control.querySelectorAll('input:checked')].map(e=>e.value)):f.type==='radio'?control.querySelector('input:checked')?.value||'':f.type==='number'?control.value===''?'':Number(control.value):control.value;
+      if(other){const text=other.value.trim();const usesOther=Array.isArray(v)?v.includes(OTHER):v===OTHER;
+        if(usesOther){if(!text){feedback.textContent='لطفاً متن گزینهٔ «سایر» را بنویسید.';other.focus();return;}
+          v=Array.isArray(v)?v.map(x=>x===OTHER?text:x):text;custom[id]=[text];}}
       if(f.required&&(v===''||v===null||v===undefined||(Array.isArray(v)&&!v.length)||(f.type==='checkbox'&&control.single&&!v))){feedback.textContent='لطفاً فیلدهای ضروری را تکمیل کنید.';return;}
       values[id]=v;
     }
-    disable();w.appendChild(elem('p','good','انتخاب ثبت شد / Submitted'));send('form',{id:m.id,values});
+    disable();w.appendChild(elem('p','good','انتخاب ثبت شد / Submitted'));send('form',{id:m.id,values,custom});
   };
   w.dataset.requestId=m.id;followBottom=true;scroll();requestAnimationFrame(()=>w.scrollIntoView({block:'end'}));
 }

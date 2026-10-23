@@ -60,3 +60,8 @@ body[data-dir=rtl] .activity{direction:rtl;text-align:right}
 .field .field-row{display:flex;flex-direction:row;align-items:flex-start;gap:9px;padding:6px 2px;font-weight:400;font-size:13px;cursor:pointer;min-width:0}
 .field .field-row input{margin-top:2px}
 .choice-text{flex:1;min-width:0;line-height:1.5;overflow-wrap:anywhere;unicode-bidi:plaintext;text-align:start}
+
+/* v0.2.1: free-text 'other' input for choice fields. */
+.other-input{margin-top:2px}
+.other-input[hidden]{display:none!important}
+.field .other-input{border:1px solid var(--line);padding:8px 9px;border-radius:7px;background:var(--vscode-input-background);color:var(--vscode-input-foreground);width:100%;min-width:0;unicode-bidi:plaintext;text-align:start}
